@@ -1,0 +1,7 @@
+# $Id$
+CHANGES
+MANIFEST
+Makefile.PL
+MessageBased.pm
+README
+t/01_basic.t
