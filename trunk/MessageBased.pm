@@ -21,95 +21,99 @@ use base qw(POE::Session);
 use POSIX qw(ENOSYS);
 
 sub _invoke_state {
-  my ($self, $source_session, $state, $etc, $file, $line) = @_;
+	my ($self, $source_session, $state, $etc, $file, $line) = @_;
 
-  # Trace the state invocation if tracing is enabled.
+	# Trace the state invocation if tracing is enabled.
 
-  if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_TRACE}) {
-    warn( $POE::Kernel::poe_kernel->ID_session_to_id($self),
-          " -> $state (from $file at $line)\n"
-        );
-  }
+	if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_TRACE}) {
+		warn(
+			$POE::Kernel::poe_kernel->ID_session_to_id($self),
+			" -> $state (from $file at $line)\n"
+		);
+	}
 
-  # The desired destination state doesn't exist in this session.
-  # Attempt to redirect the state transition to _default.
+	# The desired destination state doesn't exist in this session.
+	# Attempt to redirect the state transition to _default.
 
-  unless (exists $self->[POE::Session::SE_STATES]->{$state}) {
+	unless (exists $self->[POE::Session::SE_STATES]->{$state}) {
 
-    # There's no _default either; redirection's not happening today.
-    # Drop the state transition event on the floor, and optionally
-    # make some noise about it.
+		# There's no _default either; redirection's not happening today.
+		# Drop the state transition event on the floor, and optionally
+		# make some noise about it.
 
-    unless ( exists
-             $self->[POE::Session::SE_STATES]->{+POE::Session::EN_DEFAULT}
-           ) {
-      $! = ENOSYS;
-      if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_DEFAULT}) {
-        warn( "a '$state' state was sent from $file at $line to session ",
-              $POE::Kernel::poe_kernel->ID_session_to_id($self),
-              ", but session ",
-              $POE::Kernel::poe_kernel->ID_session_to_id($self),
-              " has neither that state nor a _default state to handle it\n"
-            );
-      }
-      return undef;
-    }
+		unless (
+			exists
+			$self->[POE::Session::SE_STATES]->{+POE::Session::EN_DEFAULT}
+		) {
+			$! = ENOSYS;
+			if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_DEFAULT}) {
+				warn(
+					"a '$state' state was sent from $file at $line to session ",
+					$POE::Kernel::poe_kernel->ID_session_to_id($self),
+					", but session ",
+					$POE::Kernel::poe_kernel->ID_session_to_id($self),
+					" has neither that state nor a _default state to handle it\n"
+				);
+			}
+			return undef;
+		}
 
-    # If we get this far, then there's a _default state to redirect
-    # the transition to.  Trace the redirection.
+		# If we get this far, then there's a _default state to redirect
+		# the transition to.  Trace the redirection.
 
-    if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_TRACE}) {
-      warn( $POE::Kernel::poe_kernel->ID_session_to_id($self),
-            " -> $state redirected to _default\n"
-          );
-    }
+		if ($self->[POE::Session::SE_OPTIONS]->{+POE::Session::OPT_TRACE}) {
+			warn(
+				$POE::Kernel::poe_kernel->ID_session_to_id($self),
+				" -> $state redirected to _default\n"
+			);
+		}
 
-    # Transmogrify the original state transition into a corresponding
-    # _default invocation.
+		# Transmogrify the original state transition into a corresponding
+		# _default invocation.
 
-    $etc   = [ $state, $etc ];
-    $state = POE::Session::EN_DEFAULT;
-  }
+		$etc   = [ $state, $etc ];
+		$state = POE::Session::EN_DEFAULT;
+	}
 
-  # If we get this far, then the state can be invoked.  So invoke it
-  # already!
+	# If we get this far, then the state can be invoked.  So invoke it
+	# already!
 
-  # Inline states are invoked this way.
+	# Inline states are invoked this way.
 
-  if (ref($self->[POE::Session::SE_STATES]->{$state}) eq 'CODE') {
-    my $message = POE::Session::Message->new
-      ( undef,                          # object
-        $self,                          # session
-        $POE::Kernel::poe_kernel,       # kernel
-        $self->[POE::Session::SE_NAMESPACE],          # heap
-        $state,                         # state
-        $source_session,                # sender
-        undef,                          # unused #6
-        $file,                          # caller file name
-        $line,                          # caller file line
-        $etc                            # args
-      );
+	if (ref($self->[POE::Session::SE_STATES]->{$state}) eq 'CODE') {
+		my $message = POE::Session::Message->new(
+			undef,                          # object
+			$self,                          # session
+			$POE::Kernel::poe_kernel,       # kernel
+			$self->[POE::Session::SE_NAMESPACE],          # heap
+			$state,                         # state
+			$source_session,                # sender
+			undef,                          # unused #6
+			$file,                          # caller file name
+			$line,                          # caller file line
+			$etc                            # args
+		);
 
-    return $self->[POE::Session::SE_STATES]->{$state}->($message, @$etc);
-  }
+		return $self->[POE::Session::SE_STATES]->{$state}->($message, @$etc);
+	}
 
-  # Package and object states are invoked this way.
+	# Package and object states are invoked this way.
 
-  my ($object, $method) = @{$self->[POE::Session::SE_STATES]->{$state}};
-  my $message = POE::Session::Message->new
-    ( $self,                          # session
-      $POE::Kernel::poe_kernel,       # kernel
-      $self->[POE::Session::SE_NAMESPACE],          # heap
-      $state,                         # state
-      $source_session,                # sender
-      undef,                          # unused #6
-      $file,                          # caller file name
-      $line,                          # caller file line
-      $etc                            # args
-    );
+	my ($object, $method) = @{$self->[POE::Session::SE_STATES]->{$state}};
+	my $message = POE::Session::Message->new(
+		$self,                          # session
+		$POE::Kernel::poe_kernel,       # kernel
+		$self->[POE::Session::SE_NAMESPACE],          # heap
+		$state,                         # state
+		$source_session,                # sender
+		undef,                          # unused #6
+		$file,                          # caller file name
+		$line,                          # caller file line
+		$etc                            # args
+	);
 
-  # Package/object are implied.
-  return $object->$method($message, @$etc);
+	# Package/object are implied.
+	return $object->$method($message, @$etc);
 }
 
 package POE::Session::Message;
@@ -117,9 +121,9 @@ package POE::Session::Message;
 use POE::Session;
 
 sub new {
-  my $class = shift;
-  my $self = bless [ @_ ], $class;
-  return $self;
+	my $class = shift;
+	my $self = bless [ @_ ], $class;
+	return $self;
 }
 
 sub object      { $_[0]->[OBJECT]      }
@@ -142,30 +146,30 @@ POE::Session::MessageBased - a message-based (not @_ based) POE::Session
 
 =head1 SYNOPSIS
 
-  use POE::Kernel;
-  use POE::Session::MessageBased;
+	use POE::Kernel;
+	use POE::Session::MessageBased;
 
-  POE::Session::MessageBased->create
-    ( inline_states =>
-      { _start => sub {
-          my $message = shift;
-          print "Started.\n";
-          $message->kernel->yield( count => 2 );
-        },
-        count => sub {
-          my ($message, $count) = @_;
-          print "Counted to $count.\n";
-          if ($count < 10) {
-            $message->kernel->yield( count => ++$count );
-          }
-        },
-        _stop => sub {
-          print "Stopped.\n";
-        }
-      },
-    );
+	POE::Session::MessageBased->create(
+		inline_states => {
+			_start => sub {
+				my $message = shift;
+				print "Started.\n";
+				$message->kernel->yield( count => 2 );
+			},
+			count => sub {
+				my ($message, $count) = @_;
+				print "Counted to $count.\n";
+				if ($count < 10) {
+					$message->kernel->yield( count => ++$count );
+				}
+			},
+			_stop => sub {
+				print "Stopped.\n";
+			}
+		},
+	);
 
-  POE::Kernel->run();
+	POE::Kernel->run();
 
 =head1 DESCRIPTION
 
@@ -187,30 +191,30 @@ almost identically to it.  The major change is the way event handlers
 
 Inline (coderef) handlers gather their parameters like this.
 
-  my ($message, @args) = @_;
+	my ($message, @args) = @_;
 
 Package and object-oriented handlers receive an additional parameter
 representing the package or object.  This is part of the common
 calling convention that Perl uses.
 
-  my ($package, $message, @args) = @_;  # Package states.
-  my ($self, $message, @args) = @_;     # Object states.
+	my ($package, $message, @args) = @_;  # Package states.
+	my ($self, $message, @args) = @_;     # Object states.
 
 The $message parameter is an instance of POE::Session::Message, which
 is not documented elsewhere.  POE::Session::Message encapsulates every
 POE parameter and provides accessors for them.
 
-  POE::Session             POE::Session::MessageBased
-  ------------------------ -----------------------------------
-  $_[OBJECT]               $package, or $self
-  $_[SESSION]              $message->session
-  $_[KERNEL]               $message->kernel
-  $_[HEAP]                 $message->heap
-  $_[STATE]                $message->state
-  $_[SENDER]               $message->sender
-  $_[CALLER_FILE]          $message->caller_file
-  $_[CALLER_LINE]          $message->caller_line
-  @_[ARG0..$#_]            $message->args (in list context)
+	POE::Session             POE::Session::MessageBased
+	------------------------ -----------------------------------
+	$_[OBJECT]               $package, or $self
+	$_[SESSION]              $message->session
+	$_[KERNEL]               $message->kernel
+	$_[HEAP]                 $message->heap
+	$_[STATE]                $message->state
+	$_[SENDER]               $message->sender
+	$_[CALLER_FILE]          $message->caller_file
+	$_[CALLER_LINE]          $message->caller_line
+	@_[ARG0..$#_]            $message->args (in list context)
 
 You do not need to use POE::Session::Message yourself.  It is included
 in POE::Session::MessageBased itself.
@@ -227,7 +231,7 @@ blank message to <poe-help@perl.org>.  Thank you.
 
 =head1 AUTHOR & LICENSE
 
-POE::Session::MessageBased is Copyright 2002-2003 by Rocco Caputo.
+POE::Session::MessageBased is Copyright 2002-2005 by Rocco Caputo.
 All rights are reserved.  POE::Session::MessageBased is free software;
 you may redistribute it and/or modify it under the same terms as Perl
 itself.
