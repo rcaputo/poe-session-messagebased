@@ -10,6 +10,7 @@ WriteMakefile(
 	NAME          => 'POE::Session::MessageBased',
 	AUTHOR        => 'Rocco Caputo <rcaputo@cpan.org>',
 	ABSTRACT      => 'Message-based events for POE (no @_ slices)',
+	LICENSE       => 'perl',
 	VERSION_FROM  => 'MessageBased.pm',
 	PM            => {
 		'MessageBased.pm' => '$(INST_LIBDIR)/MessageBased.pm'
