@@ -14,7 +14,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '0.01';
+$VERSION = '0.10';
 
 use POE;
 use base qw(POE::Session);
@@ -85,7 +85,7 @@ sub _invoke_state {
 			undef,                          # object
 			$self,                          # session
 			$POE::Kernel::poe_kernel,       # kernel
-			$self->[POE::Session::SE_NAMESPACE],          # heap
+			$self->[POE::Session::SE_NAMESPACE], # heap
 			$state,                         # state
 			$source_session,                # sender
 			undef,                          # unused #6
@@ -101,9 +101,10 @@ sub _invoke_state {
 
 	my ($object, $method) = @{$self->[POE::Session::SE_STATES]->{$state}};
 	my $message = POE::Session::Message->new(
+		$object,                        # object
 		$self,                          # session
 		$POE::Kernel::poe_kernel,       # kernel
-		$self->[POE::Session::SE_NAMESPACE],          # heap
+		$self->[POE::Session::SE_NAMESPACE], # heap
 		$state,                         # state
 		$source_session,                # sender
 		undef,                          # unused #6

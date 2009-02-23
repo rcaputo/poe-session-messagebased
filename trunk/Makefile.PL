@@ -24,6 +24,7 @@ WriteMakefile(
 		),
 	},
 	PREREQ_PM     => {
-		'POE' => 0.31,
+		'POE'        => 0.31,
+		'Test::More' => 0,
 	},
 );
