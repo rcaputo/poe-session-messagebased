@@ -15,6 +15,12 @@ WriteMakefile(
 	PM            => {
 		'MessageBased.pm' => '$(INST_LIBDIR)/MessageBased.pm'
 	},
+	META_ADD     => {
+		resources  => {
+			license    => 'http://dev.perl.org/licenses/',
+			repository => 'http://thirdlobe.com/svn/pose-messagebased/trunk'
+		},
+	},
 	dist          => {
 		'COMPRESS'  => 'gzip -9f',
 		'SUFFIX'    => 'gz',

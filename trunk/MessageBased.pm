@@ -225,18 +225,23 @@ in POE::Session::MessageBased itself.
 $message->args() always returns a list: @_[ARG0..$#_].  It would be
 nice to return a list reference in scalar context.
 
-This is experimental code.  Please use it in small projects or
-prototypes of your own, then discuss the ugly bits with the POE
-mailing list.  Subscription information is available by sending a
-blank message to <poe-help@perl.org>.  Thank you.
+=head1 BUG TRACKER
+
+https://rt.cpan.org/Dist/Display.html?Status=Active&Queue=POE-Session-MessageBased
+
+=head1 REPOSITORY
+
+http://thirdlobe.com/svn/pose-messagebased/
+
+=head1 OTHER RESOURCES
+
+http://search.cpan.org/dist/POE-Session-MessageBased/
 
 =head1 AUTHOR & LICENSE
 
-POE::Session::MessageBased is Copyright 2002-2005 by Rocco Caputo.
+POE::Session::MessageBased is Copyright 2002-2009 by Rocco Caputo.
 All rights are reserved.  POE::Session::MessageBased is free software;
 you may redistribute it and/or modify it under the same terms as Perl
 itself.
-
-The author may be contacted by e-mail via rcaputo@cpan.org.
 
 =cut
