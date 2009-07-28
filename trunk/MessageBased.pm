@@ -14,7 +14,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '0.10';
+$VERSION = '0.110';
 
 use POE;
 use base qw(POE::Session);
