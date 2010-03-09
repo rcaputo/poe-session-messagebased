@@ -85,7 +85,7 @@ BUGS
        text.
 
 AUTHOR & LICENSE
-       POE::Session::MessageBased is Copyright 2002-2003 by Rocco
+       POE::Session::MessageBased is Copyright 2002-2010 by Rocco
        Caputo.  All rights are reserved.  POE::Session::Message-
        Based is free software; you may redistribute it and/or
        modify it under the same terms as Perl itself.

@@ -1,4 +1,3 @@
-# $Id$
 # License and documentation are after __END__.
 
 # This is prototype code.  It rummages around in its base class'
@@ -14,7 +13,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '0.110';
+$VERSION = '0.111';
 
 use POE;
 use base qw(POE::Session);
@@ -231,7 +230,8 @@ https://rt.cpan.org/Dist/Display.html?Status=Active&Queue=POE-Session-MessageBas
 
 =head1 REPOSITORY
 
-http://thirdlobe.com/svn/pose-messagebased/
+http://github.com/rcaputo/poe-session-messagebased
+http://gitorious.org/poe-session-messagebased
 
 =head1 OTHER RESOURCES
 
@@ -239,7 +239,7 @@ http://search.cpan.org/dist/POE-Session-MessageBased/
 
 =head1 AUTHOR & LICENSE
 
-POE::Session::MessageBased is Copyright 2002-2009 by Rocco Caputo.
+POE::Session::MessageBased is Copyright 2002-2010 by Rocco Caputo.
 All rights are reserved.  POE::Session::MessageBased is free software;
 you may redistribute it and/or modify it under the same terms as Perl
 itself.
